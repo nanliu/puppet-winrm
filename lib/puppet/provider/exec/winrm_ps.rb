@@ -29,10 +29,11 @@ Puppet::Type.type(:exec).provide(:winrm_ps, :parent => Puppet::Provider::Exec) d
   def run(command, check = false)
     output = winrm.powershell(command)
     stdout = output[:data].collect{|line| line[:stdout]}.join
+    stderr = output[:data].collect{|line| line[:stderr]}.join
     Puppet.debug(stdout)
     # This is required to provide exitstatus for parent provider
     exitcode = ExitStatus.new(output[:exitcode])
-    [stdout, exitcode]
+    [stdout+stderr, exitcode]
   end
 
   def checkexe(command)
